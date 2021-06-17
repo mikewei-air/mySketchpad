@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+    <title>简约画板</title>
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="menu">
+        <div class="btn" id="huabi"><i class="iconfont icon-sekuaihuabi"></i></div>
+        <div class="btn" id="rect"><i class="iconfont icon-juxing"></i></div>
+        <div class="btn" id="round"><i class="iconfont icon-radio-on-full"></i></div>
+        <div class="btn" id="eraser"><i class="iconfont icon-xiangpica"></i></div>
+        <div class="btn1 line" id="thin"></div>
+        <div class="btn1 line" id="normal"></div>
+        <div class="btn1 line" id="thick"></div>
+        <div class="btn2" id="download"><a href="" download="download"><i class="iconfont icon-xiazai"></i></a></div>
+        <div class="btn2"><input type="color" name="color" id="color"></div>
+    </div>
+    <canvas id="myCanvas">您的的浏览器不支持canvas</canvas>
+
+    <script>
+        let myCanvas = document.querySelector('#myCanvas')
+        let huabiBtn = document.querySelector('#huabi')
+        let rectBtn = document.querySelector('#rect')
+        let roundBtn = document.querySelector('#round')
+        let eraserBtn = document.querySelector('#eraser')
+        let thinBtn = document.querySelector('#thin')
+        let normalBtn = document.querySelector('#normal')
+        let thickBtn = document.querySelector('#thick')
+        let btns = document.querySelectorAll('.btn')
+        let lines = document.querySelectorAll('.line')
+        let downloadImg = document.querySelector('#download')
+        let colorInput = document.querySelector('#color')
+        let ctx = myCanvas.getContext('2d')
+        let huaban = {
+                type: null,
+                isDraw: false,
+                beginX: null,
+                beginY: null,
+                imageData: null,
+                lineWidth: 8,
+                color: '#000',
+                huabiFn: function(e) {
+                    let x = e.pageX - myCanvas.offsetLeft
+                    let y = e.pageY - myCanvas.offsetTop
+                    ctx.globalCompositeOperation = 'source-over'
+                    ctx.lineTo(x, y)
+                    ctx.lineWidth = huaban.lineWidth
+                    ctx.strokeStyle = huaban.color
+                    ctx.lineCap = 'round'
+                    ctx.lineJoin = 'round'
+                    ctx.stroke()
+
+                },
+                rectFn: function(e) {
+                    let x = e.pageX - myCanvas.offsetLeft
+                    let y = e.pageY - myCanvas.offsetTop
+                    ctx.clearRect(0, 0, myCanvas.offsetWidth, myCanvas.offsetHeight)
+                    if (huaban.imageData) {
+                        ctx.putImageData(huaban.imageData, 0, 0, 0, 0, myCanvas.offsetWidth, myCanvas.offsetHeight)
+                    }
+                    ctx.globalCompositeOperation = 'source-over'
+                    ctx.beginPath()
+                    ctx.lineWidth = huaban.lineWidth
+                    ctx.rect(huaban.beginX, huaban.beginY, x - huaban.beginX, y - huaban.beginY)
+                    ctx.strokeStyle = huaban.color
+                    ctx.stroke()
+                    ctx.closePath()
+                },
+                roundFn: function(e) {
+                    let x = e.pageX - myCanvas.offsetLeft
+                    let y = e.pageY - myCanvas.offsetTop
+                    ctx.clearRect(0, 0, myCanvas.offsetWidth, myCanvas.offsetHeight)
+                    if (huaban.imageData) {
+                        ctx.putImageData(huaban.imageData, 0, 0, 0, 0, myCanvas.offsetWidth, myCanvas.offsetHeight)
+                    }
+                    let radius = Math.sqrt((x - huaban.beginX) ** 2 + (y - huaban.beginY) ** 2)
+                    let rx = (x + huaban.beginX) / 2
+                    let ry = (y + huaban.beginY) / 2
+                    console.log(rx, ry, radius / 10);
+                    ctx.globalCompositeOperation = 'source-over'
+                    ctx.beginPath()
+                    ctx.lineWidth = huaban.lineWidth
+                    ctx.arc(rx, ry, radius, 0, Math.PI * 2)
+                    ctx.strokeStyle = huaban.color
+                    ctx.stroke()
+                    ctx.closePath()
+                },
+                eraserFn: function(e) {
+                    let x = e.pageX - myCanvas.offsetLeft
+                    let y = e.pageY - myCanvas.offsetTop
+                    ctx.clearRect(0, 0, myCanvas.offsetWidth, myCanvas.offsetHeight)
+                    if (huaban.imageData) {
+                        ctx.putImageData(huaban.imageData, 0, 0, 0, 0, myCanvas.offsetWidth, myCanvas.offsetHeight)
+                    }
+                    ctx.lineTo(x, y)
+                    ctx.lineWidth = huaban.lineWidth
+                    ctx.globalCompositeOperation = 'destination-out'
+                    ctx.strokeStyle = "red"
+                    ctx.lineCap = 'round'
+                    ctx.lineJoin = 'round'
+                    ctx.stroke()
+                }
+            }
+            // console.log([myCanvas]);
+            //设置画纸宽高属性
+        myCanvas.setAttribute('width', myCanvas.offsetWidth)
+        myCanvas.setAttribute('height', myCanvas.offsetHeight)
+            //监听选择画笔事件
+        huabiBtn.onclick = function() {
+                btns.forEach(item => {
+                    item.classList.remove('active')
+                })
+                huabiBtn.classList.add("active")
+                huaban.type = 'huabi'
+            }
+            //监听选择矩形事件
+        rectBtn.onclick = function() {
+                btns.forEach(item => {
+                    item.classList.remove('active')
+                })
+                rectBtn.classList.add("active")
+                huaban.type = 'rect'
+            }
+            //监听选择圆形事件
+        roundBtn.onclick = function() {
+                btns.forEach(item => {
+                    item.classList.remove('active')
+                })
+                roundBtn.classList.add("active")
+                huaban.type = 'round'
+                console.log(huaban)
+            }
+            //监听选择橡皮擦事件
+        eraserBtn.onclick = function() {
+            btns.forEach(item => {
+                item.classList.remove('active')
+            })
+            eraserBtn.classList.add("active")
+            huaban.type = 'eraser'
+            console.log(huaban)
+        }
+
+        //设置笔触的的尺寸
+        lines.forEach((item, index) => {
+                item.onclick = function() {
+                    lines.forEach(a => {
+                        a.classList.remove('active')
+                    })
+                    item.classList.add('active')
+                    if (index === 0) {
+                        huaban.lineWidth = 8
+                    } else if (index === 1) {
+                        huaban.lineWidth = 16
+                    } else {
+                        huaban.lineWidth = 32
+                    }
+                }
+            })
+            //设置颜色
+        colorInput.onchange = function() {
+                // console.log(colorInput.value);
+                huaban.color = colorInput.value
+            }
+            //监听下载图片事件
+        downloadImg.onclick = function() {
+            let aDom = document.querySelector('#download>a')
+            let url = myCanvas.toDataURL()
+            aDom.href = url
+            console.log(url);
+        }
+
+        //监听鼠标按下事件
+        myCanvas.onmousedown = function(e) {
+                huaban.isDraw = true
+                    // console.log(huaban.isDraw)
+                if (huaban.type === 'rect' || huaban.type === 'round' || huaban.type === 'eraser') {
+                    let x = e.pageX - myCanvas.offsetLeft
+                    let y = e.pageY - myCanvas.offsetTop
+                    huaban.beginX = x
+                    huaban.beginY = y
+                }
+                if (huaban.type === 'huabi' || huaban.type === 'eraser') {
+                    let x = e.pageX - myCanvas.offsetLeft
+                    let y = e.pageY - myCanvas.offsetTop
+                    huaban.beginX = x
+                    huaban.beginY = y
+                    ctx.beginPath()
+                    ctx.moveTo(huaban.beginX, huaban.beginY)
+                }
+                console.log(huaban);
+            }
+            //监听鼠标抬起事件
+        myCanvas.onmouseup = function() {
+                huaban.isDraw = false
+                    // console.log(huaban.isDraw)
+                    //对画纸上的数据进行保留
+                huaban.imageData = ctx.getImageData(0, 0, myCanvas.offsetWidth, myCanvas.offsetHeight)
+                if (huaban.type === 'huabi') {
+                    ctx.closePath()
+                }
+            }
+            //监听鼠标的移动事件
+        myCanvas.onmousemove = function(e) {
+            console.log(huaban.isDraw)
+            if (huaban.isDraw) {
+                let strFn = huaban.type + 'Fn'
+                huaban[strFn](e)
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+a {
+    text-decoration: none;
+}
+.menu {
+    width: 100vw;
+    height: 100px;
+    border-bottom: 3px solid #ccc;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-Color: beige;
+}
+
+#myCanvas {
+    width: 100vw;
+    flex: 1;
+}
+
+.btn,.btn1,.btn2 {
+    width: 100px;
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    text-align: center;
+    line-height: 50px;
+}
+.active {
+    box-shadow: 0 0 20px deepSkyblue;
+    border: 1px solid deepSkyblue;
+}
+
+.line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#thin::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    display: block;
+    border-radius: 4px;
+    background-Color: #333;
+}
+
+#normal::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    display: block;
+    border-radius: 8px;
+    background-Color: #333;
+}
+
+#thick::after {
+    content: '';
+    width: 32px;
+    height: 32px;
+    display: block;
+    border-radius: 16px;
+    background-Color: #333;
+}
